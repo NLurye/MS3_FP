@@ -1,4 +1,5 @@
 import scala.collection.mutable.ListBuffer
+import scala.math.log
 
 object Util {
 

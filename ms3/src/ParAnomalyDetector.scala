@@ -30,7 +30,7 @@ trait ParAnomalyDetector {
 
     }
 
-
+    allReports.toVector
   }
 }
 //

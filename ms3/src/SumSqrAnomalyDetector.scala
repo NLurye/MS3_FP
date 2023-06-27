@@ -1,3 +1,5 @@
+import scala.collection.mutable
+
 object SumSqrAnomalyDetector extends AnomalyDetector {
   override def learn(normal: TimeSeries): Map[String, String] = {
     val model = new mutable.HashMap[String, String]()

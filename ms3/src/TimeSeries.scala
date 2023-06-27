@@ -4,8 +4,8 @@ import scala.io.Source
 
 class TimeSeries(csvFileName:String) {
   val data=new mutable.HashMap[String,Vector[Double]]()
-  var length: Int
-  var features: Vector[String]
+  var length: Int = 0
+  var features:Vector[String] = Vector.empty[String]
   private val source = if (csvFileName.nonEmpty) Some(Source.fromFile(csvFileName))
     else None
   if (source.isDefined) {
