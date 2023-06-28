@@ -3,10 +3,13 @@ import scala.collection.mutable.ListBuffer
 object EntropyAnomalyDetector extends ParAnomalyDetector {
 
   override def map(ts: TimeSeries): Reports = {
-    ListBuffer.empty ++
-      ts.data
-        .map(e => (e._1, Util.getMaximumAnomaly(e._2.toArray)))
-        .map(e => Report(e._1, e._2._2, e._2._1))
+    val reports: ListBuffer[Report] = ListBuffer.empty
+    for (e <- ts.data) {
+      val maximumAnomaly = Util.getMaximumAnomaly(e._2.toArray)
+      val report = Report(e._1, maximumAnomaly._2, maximumAnomaly._1)
+      reports += report
+    }
+    reports
   }
 
   override def reduce(r1: Reports, r2: Reports): Reports = {

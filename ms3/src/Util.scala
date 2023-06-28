@@ -50,22 +50,6 @@ object Util {
   def pearson(xs: Array[Double], ys: Array[Double]): Double =
     cov(xs, ys) / (Math.sqrt(variance(xs)) * Math.sqrt(variance(ys)))
 
-  def toPoints(xs: Array[Int], ys: Array[Int]): Array[Point] =
-    (xs zip ys).map(pi => new Point(pi._1, pi._2))
-
-  def toPoints(xs: Array[Double], ys: Array[Double]): Array[Point] =
-    (xs zip ys).map(pi => new Point(pi._1, pi._2))
-
-  def dist(a: Point, b: Point): Double = Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))
-
-  def distSqr(a: Point, b: Point): Double = (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)
-
-  def sumSqrDist(a: Point, ps: Array[Point]): Double =
-    ps.map(pi => distSqr(a, pi)).sum
-
-  def argMinSqrDist(ps: Array[Point]): Point =
-    ps.minBy(pi => sumSqrDist(pi, ps))
-
 
   def correlationFinder(normal: TimeSeries): List[(Int, Int, Double)] = {
     val r = new ListBuffer[(Int, Int, Double)]
