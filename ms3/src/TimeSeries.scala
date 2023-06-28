@@ -2,32 +2,27 @@ import scala.collection.mutable
 import scala.io.Source
 
 
-class TimeSeries(csvFileName: String) {
-  val data = new mutable.HashMap[String, Vector[Double]]()
+class TimeSeries(csvFileName:String) {
+  val data=new mutable.HashMap[String,Vector[Double]]()
   var length: Int = 0
-  var features: Vector[String] = Vector.empty[String]
+  var features:Vector[String] = Vector.empty[String]
   private val source = if (csvFileName.nonEmpty) Some(Source.fromFile(csvFileName))
-  else None
+    else None
   if (source.isDefined) {
-    val dataBuilder = new mutable.HashMap[String, mutable.ArrayBuffer[Double]]()
-    features = source.get.getLines().next().split(",").toVector
-    features.foreach(f => dataBuilder.put(f, mutable.ArrayBuffer[Double]()))
-    source.get.getLines().foreach { line =>
-      val row = line.split(",")
-      for (i <- 0 until row.length) {
-        if (dataBuilder.contains(features(i))) {
-          val value = row(i).toDouble
-          val convertedValue = if (value.isWhole) value.toInt else value
-          dataBuilder.get(features(i)).get += convertedValue
+    val dataBuilder=new mutable.HashMap[String,mutable.ArrayBuffer[Double]]()
+    features=source.get.getLines().next().split(",").toVector
+  features.foreach(f=>dataBuilder.put(f,mutable.ArrayBuffer[Double]()))
+  source.get.getLines().foreach(line=>{
+        val row=line.split(",")
+        for(i<-0 until row.length) {
+          if(dataBuilder.contains(features(i)))
+            dataBuilder.get(features(i)).get += row(i).toDouble
         }
-      }
-    }
-
-    source.get.close()
-    dataBuilder.foreach(t => data.put(t._1, t._2.toVector))
+  })
+  source.get.close()
+  dataBuilder.foreach(t=>data.put(t._1,t._2.toVector))
     length = data.values.head.size
-  }
-
+}
 
   // given name of a feature return in O(1) its value series
   def getValues(feature:String):Option[Vector[Double]]=
