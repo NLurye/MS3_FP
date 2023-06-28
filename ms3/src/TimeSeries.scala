@@ -19,9 +19,9 @@ class TimeSeries(csvFileName:String) {
             dataBuilder.get(features(i)).get += row(i).toDouble
         }
   })
-    length = source.get.getLines().size
   source.get.close()
-dataBuilder.foreach(t=>data.put(t._1,t._2.toVector))
+  dataBuilder.foreach(t=>data.put(t._1,t._2.toVector))
+    length = data.values.head.size
 }
 
   // given name of a feature return in O(1) its value series
@@ -70,5 +70,7 @@ dataBuilder.foreach(t=>data.put(t._1,t._2.toVector))
     }
     splitSeries.toList
   }
+
+
 
 }
