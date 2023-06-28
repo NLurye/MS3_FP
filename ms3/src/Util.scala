@@ -89,4 +89,22 @@ object Util {
     r.toList
   }
 
+  def getMaximumAnomaly(xs: Array[Double]): (Double, Int) = {
+    val numIndices = xs.length
+
+    def removeElement(array: Array[Double], index: Int): Array[Double] = {
+      array.zipWithIndex.filter(_._2 != index).map(_._1)
+    }
+
+    def calculateAnomaly(array: Array[Double], index: Int): Double = {
+      val originalEntropy = entropy(array)
+      val modifiedEntropy = entropy(removeElement(array, index))
+      originalEntropy - modifiedEntropy
+    }
+
+    val anomalies = (0 until numIndices).map(index => calculateAnomaly(xs, index))
+    val maxAnomalyIndex = anomalies.zipWithIndex.maxBy(_._1)._2
+    (anomalies(maxAnomalyIndex), maxAnomalyIndex)
+  }
+
 }

@@ -53,24 +53,29 @@ class TimeSeries(csvFileName:String) {
   }
 
   def split(n: Int): List[TimeSeries] = {
+    if (length == 0) {
+      return List()
+    }
+    if (length < 2 * n) {
+      return List(this)
+    }
     val numRows = length
     val chunkSize = numRows / n
     var remainder = numRows % n
 
-    var startIndex = 0
+    var endIndex = numRows
     val splitSeries = for (_ <- 1 to n) yield {
-      val endIndex = startIndex + chunkSize + (if (remainder > 0) 1 else 0)
+      val extraChunk = if (remainder > 0) 1 else 0
+      val startIndex = endIndex - (chunkSize + extraChunk)
       val chunkRange = startIndex until endIndex
       val chunkData = data.map { case (feature, values) =>
         feature -> values.slice(chunkRange.start, chunkRange.end)
       }
-      startIndex = endIndex
-      remainder -= 1
+      endIndex = startIndex
+      remainder -= extraChunk
       new TimeSeries(chunkData.toMap, chunkRange.length, features)
     }
-    splitSeries.toList
+    splitSeries.toList.reverse
   }
-
-
 
 }
