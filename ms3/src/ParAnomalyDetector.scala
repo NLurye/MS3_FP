@@ -2,7 +2,8 @@ import java.util.concurrent.{Callable, ExecutorService, Future}
 import scala.collection.mutable.ListBuffer
 
 
-case class Report(feature: String, var timeStep: Int, anomalyScore: Double)
+//case class Report(feature: String, var timeStep: Int, anomalyScore: Double)
+case class Report(feature: String, var timeStep: Int, anomalyScore: Double, value: Double)
 
 
 trait ParAnomalyDetector {
@@ -24,7 +25,7 @@ trait ParAnomalyDetector {
       val future: Future[Reports] = es.submit(callable)
       val all_reports: Reports = future.get()
       for (r <- all_reports) {
-      println("[f: ", r.feature,"time: ", r.timeStep, " anomalyScore: ", r.anomalyScore)
+      println("[f: ", r.feature,"time: ", r.timeStep, " anomalyScore: ", r.anomalyScore, "VALUE: ", r.value)
       }
 
 

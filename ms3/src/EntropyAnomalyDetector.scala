@@ -6,7 +6,8 @@ object EntropyAnomalyDetector extends ParAnomalyDetector {
     val reports: ListBuffer[Report] = ListBuffer.empty
     for (e <- ts.data) {
       val maximumAnomaly = Util.getMaximumAnomaly(e._2.toArray)
-      val report = Report(e._1, maximumAnomaly._2, maximumAnomaly._1)
+//      val report = Report(e._1, maximumAnomaly._2, maximumAnomaly._1)
+        val report = Report(e._1, maximumAnomaly._2, maximumAnomaly._1, e._2(maximumAnomaly._2))
       reports += report
     }
     reports
