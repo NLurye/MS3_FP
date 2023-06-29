@@ -13,6 +13,21 @@ object EntropyAnomalyDetector extends ParAnomalyDetector {
   }
 
   override def reduce(r1: Reports, r2: Reports): Reports = {
-    ListBuffer.empty ++ (r1 ++ r2).groupBy(_.feature).map(_._2.maxBy(_.anomalyScore)).toArray.sortBy(_.feature)
+    val mergedReports = r1 ++ r2
+    val groupedReports = mergedReports.groupBy(_.feature)
+    val selectedReports = ListBuffer.empty[Report]
+    for ((_, reports) <- groupedReports) {
+      var maxScoreReport = reports.head
+      for (report <- reports.tail) {
+        if (report.anomalyScore > maxScoreReport.anomalyScore) {
+          maxScoreReport = report
+        }
+      }
+      selectedReports += maxScoreReport
+    }
+    val sortedReports = selectedReports.toSeq.sortBy(_.feature)
+    val result = ListBuffer.empty[Report]
+    result ++= sortedReports
+    result
   }
 }

@@ -1,5 +1,4 @@
-import scala.collection.mutable.ListBuffer
-import scala.math.log
+import scala.reflect.ClassTag
 
 object Util {
 
@@ -25,70 +24,49 @@ object Util {
       false
   }
 
-  def probs(xs: Array[Double]): Array[Double] =
-    xs.map(xi => xs.count(xj => xi == xj) / xs.size.toDouble)
+  def entropy(xs: Array[Double]): Double = {
+    -xs.groupBy(identity)
+      .map(_._2.length.toDouble / xs.length)
+      .map(p => p * math.log(p) / math.log(2))
+      .sum
+  }
 
-  def entropy(xs: Array[Double]): Double =
-    -(xs zip probs(xs)).distinct.map(pi => pi._2 * log(pi._2) / log(2)).sum
-
-  def mu(xs: Array[Double]): Double =
-    (xs zip probs(xs)).distinct.map {
-      Function.tupled(_ * _)
-    }.sum
-
-  def variance(xs: Array[Double]): Double =
-    (xs zip probs(xs)).distinct.map {
-      Function.tupled((xi, pi) => pi * (xi - mu(xs)) * (xi - mu(xs)))
-    }.sum
-
-  def zscore(xs: Array[Double], x: Double): Double =
-    (x - mu(xs)) / Math.sqrt(variance(xs))
-
-  def cov(xs: Array[Double], ys: Array[Double]): Double =
-    mu((xs zip ys).map(Function.tupled((xi, yi) => xi * yi))) - mu(xs) * mu(ys)
-
-  def pearson(xs: Array[Double], ys: Array[Double]): Double =
-    cov(xs, ys) / (Math.sqrt(variance(xs)) * Math.sqrt(variance(ys)))
-
-
-  def correlationFinder(normal: TimeSeries): List[(Int, Int, Double)] = {
-    val r = new ListBuffer[(Int, Int, Double)]
-    for (i <- 0 until normal.features.size) {
-      val xs = normal.getValues(normal.features(i)).get.toArray
-      var maxJ = (-1)
-      var maxCor = 0.0
-      for (j <- i + 1 until normal.features.size) { // find max correlation partner
-        val ys = normal.getValues(normal.features(j)).get.toArray
-        val cor = Math.abs(Util.pearson(xs, ys))
-        if (maxCor < cor) {
-          maxCor = cor
-          maxJ = j
-        }
+  def remove[A: ClassTag](xs: Array[A], index: Int): Array[A] = {
+    val newArr = new Array[A](xs.length - 1)
+    var i = 0
+    var j = 0
+    while (i < xs.length) {
+      if (i != index) {
+        newArr(j) = xs(i)
+        j += 1
       }
-      if (maxJ > (-1)) // then feature_i and feature_j have max correlation
-        r += Tuple3(i, maxJ, maxCor)
-      else
-        r += Tuple3(i, i, 0)
+      i += 1
     }
-    r.toList
+    newArr
+  }
+
+  def anomaly(xs: Array[Double], index: Int, general_entropy: Double): Double = {
+    val removed = remove(xs, index)
+    val entropyRemoved = entropy(removed)
+    general_entropy - entropyRemoved
   }
 
   def getMaximumAnomaly(xs: Array[Double]): (Double, Int) = {
-    val numIndices = xs.length
-
-    def removeElement(array: Array[Double], index: Int): Array[Double] = {
-      array.zipWithIndex.filter(_._2 != index).map(_._1)
+    var maxAnomaly = Double.MinValue
+    var maxIndex = 0
+    var i = 0
+    val general_entropy = entropy(xs)
+//    println("general: ",general_entropy)
+    while (i < xs.length) {
+      val currentAnomaly = anomaly(xs, i, general_entropy)
+      if (currentAnomaly > maxAnomaly) {
+//        println("updated from: ", maxAnomaly, "to: ", currentAnomaly)
+        maxAnomaly = currentAnomaly
+        maxIndex = i
+      }
+      i += 1
     }
-
-    def calculateAnomaly(array: Array[Double], index: Int): Double = {
-      val originalEntropy = entropy(array)
-      val modifiedEntropy = entropy(removeElement(array, index))
-      originalEntropy - modifiedEntropy
-    }
-
-    val anomalies = (0 until numIndices).map(index => calculateAnomaly(xs, index))
-    val maxAnomalyIndex = anomalies.zipWithIndex.maxBy(_._1)._2
-    (anomalies(maxAnomalyIndex), maxAnomalyIndex)
+    (maxAnomaly, maxIndex)
   }
 
 }

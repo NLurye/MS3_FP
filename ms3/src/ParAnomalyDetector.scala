@@ -13,21 +13,22 @@ trait ParAnomalyDetector {
   def reduce(r1: Reports, r2: Reports): Reports
 
   def detect(ts: TimeSeries, es: ExecutorService, chunks: Int): Vector[Report] = {
-    val tss = ts.split(chunks)
+    val splitted_ts = ts.split(chunks)
     val new_size = ts.length / chunks
-    val reportsList: ListBuffer[Reports] = ListBuffer.empty
+    val reports_list: ListBuffer[Reports] = ListBuffer.empty
 
-    for ((t, i) <- tss.zipWithIndex) {
+    for ((t, i) <- splitted_ts.zipWithIndex) {
       val callable: Callable[Reports] = new Callable[Reports] {
         override def call(): Reports = map(t)
       }
       val future: Future[Reports] = es.submit(callable)
-      val reports: Reports = future.get()
+      val all_reports: Reports = future.get()
+//      println(all_reports)
 
-      reports.toList.foreach(r => r.timeStep = r.timeStep + (i * new_size))
-      reportsList += reports
+      all_reports.toList.foreach(r => r.timeStep = r.timeStep + (i * new_size))
+      reports_list += all_reports
     }
 
-    reportsList.reduce(this.reduce).toVector
+    reports_list.reduce(this.reduce).toVector
   }
 }

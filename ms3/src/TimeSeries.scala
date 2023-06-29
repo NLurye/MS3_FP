@@ -56,7 +56,7 @@ class TimeSeries(csvFileName:String) {
     if (length == 0) {
       return List()
     }
-    if (length < 2 * n) {
+    if (n==1 || length < 2 * n) {
       return List(this)
     }
     val numRows = length
