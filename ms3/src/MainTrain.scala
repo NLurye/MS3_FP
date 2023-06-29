@@ -30,11 +30,11 @@ object MainTrain {
       println("wrong number of opened threads (-7)")
     es.shutdown()
     if (!(v(0).feature == "A" && v(0).timeStep == 24))
-      println("wrong anomaly reported for feature A with " + chunks + " chunks (-8)")
+      println("wrong anomaly reported for feature A with " + chunks + " chunks, chosen: "+v(0).timeStep ,"instead of 24")
     if (!(v(1).feature == "B" && v(1).timeStep == 29))
-      println("wrong anomaly reported for feature B with " + chunks + " chunks (-8)")
+      println("wrong anomaly reported for feature B with " + chunks + " chunks, chosen: "+v(1).timeStep,"instead  of 29")
     if (!(v(2).feature == "C" && v(2).timeStep == 50))
-      println("wrong anomaly reported for feature C with " + chunks + " chunks (-8)")
+      println("wrong anomaly reported for feature C with " + chunks + " chunks, chosen: "+v(2).timeStep,"instead of 50")
   }
 
   def main(args: Array[String]): Unit = {
