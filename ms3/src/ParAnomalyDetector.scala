@@ -23,9 +23,12 @@ trait ParAnomalyDetector {
       }
       val future: Future[Reports] = es.submit(callable)
       val all_reports: Reports = future.get()
-//      println(all_reports)
+      for (r <- all_reports) {
+      println("[f: ", r.feature,"time: ", r.timeStep, " anomalyScore: ", r.anomalyScore)
+      }
 
-      all_reports.toList.foreach(r => r.timeStep = r.timeStep + (i * new_size))
+
+        all_reports.toList.foreach(r => r.timeStep = r.timeStep + (i * new_size))
       reports_list += all_reports
     }
 
