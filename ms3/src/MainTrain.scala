@@ -31,23 +31,24 @@ object MainTrain {
     es.shutdown()
     if (!(v(0).feature == "A" && v(0).timeStep == 24))
       println("wrong anomaly reported for feature A with " + chunks + " chunks, chosen: "+v(0).timeStep ,"instead of 24")
-    else println("24 chosen right on ", chunks, " chunks!!!!")
+    else println("24 chosen right on feature A", chunks, " chunks!!!!")
     if (!(v(1).feature == "B" && v(1).timeStep == 29))
       println("wrong anomaly reported for feature B with " + chunks + " chunks, chosen: "+v(1).timeStep,"instead  of 29")
-    else println("29 chosen right on ", chunks, " chunks!!!!")
+    else println("29 chosen right on feature B", chunks, " chunks!!!!")
     if (!(v(2).feature == "C" && v(2).timeStep == 50))
       println("wrong anomaly reported for feature C with " + chunks + " chunks, chosen: "+v(2).timeStep,"instead of 50")
-    else println("50 chosen right on ", chunks, " chunks!!!!")
+    else println("50 chosen right on feature C", chunks, " chunks!!!!")
   }
 
   def main(args: Array[String]): Unit = {
 
     testTimeSeries()
     val ts = new TimeSeries("train2.csv")
-    testEAD(ts, 2)
-    testEAD(ts, 3)
-    testEAD(ts, 4)
-    testEAD(ts, 5)
+//    testEAD(ts, 1)
+//    testEAD(ts, 2)
+//    testEAD(ts, 3)
+//    testEAD(ts, 4)
+//    testEAD(ts, 5)
     testEAD(ts, 6)
 
     println("done")
