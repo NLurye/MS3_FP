@@ -41,9 +41,11 @@ object MainTrain {
 
     testTimeSeries()
     val ts = new TimeSeries("train2.csv")
-    testEAD(ts, 1)
+    testEAD(ts, 2)
     testEAD(ts, 3)
+    testEAD(ts, 4)
     testEAD(ts, 5)
+    testEAD(ts, 6)
 
     println("done")
   }

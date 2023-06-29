@@ -1,3 +1,4 @@
+import scala.math.log
 import scala.reflect.ClassTag
 
 object Util {
@@ -24,12 +25,10 @@ object Util {
       false
   }
 
-  def entropy(xs: Array[Double]): Double = {
-    -xs.groupBy(identity)
-      .map(_._2.length.toDouble / xs.length)
-      .map(p => p * math.log(p) / math.log(2))
-      .sum
-  }
+  def probs(xs: Array[Double]): Array[Double] =
+    xs.map(xi => xs.count(xj => xi == xj) / xs.size.toDouble)
+  def entropy(xs: Array[Double]): Double =
+    -(xs zip probs(xs)).distinct.map(pi => pi._2 * log(pi._2) / log(2)).sum
 
   def remove[A: ClassTag](xs: Array[A], index: Int): Array[A] = {
     val newArr = new Array[A](xs.length - 1)
